@@ -1,29 +1,34 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/foundation.dart';
-// import 'package:objectdb/objectdb.dart';
+import 'package:hive/hive.dart';
+import 'box_collections.dart';
+
+enum CodeStatus {
+  pending,
+  accepted,
+  declined,
+}
 
 class Code {
   late String challenge;
+  late CodeStatus status;
+
   String? url;
   String? email;
-  String? public_key;
-  Code(this.challenge);
+  String? publicKey;
+
+  Code(this.challenge, {this.status=CodeStatus.pending});
   Code.generate() {
+    status = CodeStatus.pending;
     challenge = Random.secure() as String;
   }
-}
 
-List<Code>? GetList() {
-  final path = "${Directory.current.path}/app.db";
-  try {
-    final fileStat = FileStat.statSync(path);
-  } catch (e){
-    if (kDebugMode) {
-      print(e);
+  static Stream<Code> list() async* {
+    BoxCollection db = await BoxCollection.open(dbName, boxes);
+    var collection = await db.openBox<Code>("codes");
+    var results = await collection.getAllValues();
+    for (var r in results.values) {
+      yield r;
     }
-    return null;
   }
-  // final db = ObjectDB(File(path));
-  // List<Code> codes =
 }

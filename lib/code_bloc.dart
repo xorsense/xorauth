@@ -33,8 +33,8 @@ class CodeState {
 class CodeBloc extends Bloc<CodeEvent, CodeState> {
   CodeBloc() : super(CodeState(CodeInitialized())) {
     on<CodeListingRequested>((event, emit) =>
-        emit(CodeState.withCodes(CodeListingRequested(), GetList())));
+        emit(CodeState.withCodes(CodeListingRequested(), [])));
     on<CodeAdditionRequested>((event, emit) =>
-        emit(CodeState.withCode(CodeAdditionRequested(), Code.generate())));
+      emit(CodeState.withCode(CodeAdditionRequested(), Code.generate())));
   }
 }
